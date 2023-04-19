@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const router = express.Router();
-const db = require('../db');
+const db = require("./db/schema.sql")
 const sequelize = require('./config/connection');
 
 router.get('/employees', (req, res) => {

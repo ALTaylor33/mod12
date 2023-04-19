@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Employee, Title, Department } = require('../../models');
+const { Employee, Title, Department } = require('./models');
 
 router.get('/', async (req, res) => {
   try {
