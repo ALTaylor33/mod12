@@ -1,48 +1,52 @@
 const express = require('express');
-// Import and require mysql2
-const mysql = require('mysql2');
-
-const PORT = process.env.PORT || 3001;
 const app = express();
+const router = express.Router();
+const db = require('../db');
+const sequelize = require('./config/connection');
 
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
+router.get('/employees', (req, res) => {
+  db.query('SELECT * FROM employees', (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
+});
+
+router.post('/employees', (req, res) => {
+  const { first_name, last_name, department, title, salary, manager } = req.body;
+  const query = `INSERT INTO employees (first_name, last_name, department, title, salary, manager) VALUES (?, ?, ?, ?, ?, ?)`;
+  const values = [first_name, last_name, department, title, salary, manager];
+
+  db.query(query, values, (err, results) => {
+    if (err) throw err;
+    res.json({ message: 'Employee added successfully!' });
+  });
+});
+
+router.get('/departments', (req, res) => {
+  db.query('SELECT * FROM departments', (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
+});
+
+router.post('/departments', (req, res) => {
+  const { name } = req.body;
+  const query = `INSERT INTO departments (name) VALUES (?)`;
+  const values = [name];
+
+  db.query(query, values, (err, results) => {
+    if (err) throw err;
+    res.json({ message: 'Department added successfully!' });
+  });
+});
+
 app.use(express.json());
+app.use('/api', router);
 
-// Connect to database
-const db = mysql.createConnection(
-  {
-    host: 'localhost',
-    // MySQL username,
-    user: 'root',
-    // TODO: Add MySQL password
-    password: '',
-    database: 'employee_db'
-  },
-  console.log(`Connected to the books_db database.`)
-);
-
-// Query database
-
-let deletedRow = 2;
-
-db.query(`DELETE EMPLOYEE id = ?` (err, result) => {
-  if (err) {
-    console.log(err);
-  }
-  console.log(result);
+app.listen(3001, () => {
+  console.log('Server started on port 3001');
 });
 
-// Query database
-db.query('SELECT * FROM favorite_books', function (err, results) {
-  console.log(results);
-});
-
-// Default response for any other request (Not Found)
-app.use((req, res) => {
-  res.status(404).end();
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+sequelize.sync({ force: false }).then(() => {
+  app.listen(PORT, () => console.log('Now listening'));
 });
