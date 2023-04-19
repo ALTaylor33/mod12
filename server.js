@@ -1,9 +1,9 @@
 const express = require('express');
 const app = express();
 const router = express.Router();
-const db = require("./db/schema.sql")
+//const db = require("./db")
 const sequelize = require('./config/connection');
-
+const PORT = process.env.PORT || 3020;
 router.get('/employees', (req, res) => {
   db.query('SELECT * FROM employees', (err, results) => {
     if (err) throw err;
